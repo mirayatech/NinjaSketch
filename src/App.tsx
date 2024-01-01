@@ -14,9 +14,7 @@ type ElementType = {
 export default function App() {
   const [elements, setElements] = useState<ElementType[]>([]);
   const [drawing, setDrawing] = useState(false);
-  const [elementType, setElementType] = useState<
-    "line" | "rectangle" | "circle"
-  >("line");
+  const [elementType, setElementType] = useState<"line" | "rectangle">("line");
 
   const generator = rough.generator();
 
