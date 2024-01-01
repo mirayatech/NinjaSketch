@@ -2,6 +2,7 @@ import { MouseEvent, useLayoutEffect, useState } from "react";
 import rough from "roughjs";
 
 type ElementType = {
+  id: number;
   x1: number;
   y1: number;
   x2: number;
@@ -10,6 +11,8 @@ type ElementType = {
   // TODO: add type
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   roughElement: any;
+  offsetX?: number;
+  offsetY?: number;
 };
 
 enum Tools {
@@ -40,7 +43,9 @@ export default function App() {
     return { id, x1, y1, x2, y2, type, roughElement };
   };
 
-  const distance = (a, b) =>
+  type Point = { x: number; y: number };
+
+  const distance = (a: Point, b: Point) =>
     Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 
   const isWithinElement = (x: number, y: number, element: ElementType) => {
@@ -53,7 +58,7 @@ export default function App() {
       const maxY = Math.max(y1, y2);
       return x >= minX && x <= maxX && y >= minY && y <= maxY;
     } else {
-      // Source: https://stackoverflow.com/questions/17692922/check-is-a-point-x-y-is-between-two-points-drawn-on-a-straight-line/17693146#17693146
+      // 💭 Source: https://stackoverflow.com/questions/17692922/check-is-a-point-x-y-is-between-two-points-drawn-on-a-straight-line/17693146#17693146
       const a = { x: x1, y: y1 };
       const b = { x: x2, y: y2 };
       const c = { x, y };
@@ -62,7 +67,11 @@ export default function App() {
     }
   };
 
-  const getElementAtPosition = (x, y, elements) => {
+  const getElementAtPosition = (
+    x: number,
+    y: number,
+    elements: ElementType[]
+  ) => {
     return elements.find((element) => isWithinElement(x, y, element));
   };
 
@@ -123,7 +132,7 @@ export default function App() {
     const { clientX, clientY } = event;
 
     if (tool === Tools.Selection) {
-      event.target.style.cursor = getElementAtPosition(
+      (event.target as HTMLElement).style.cursor = getElementAtPosition(
         clientX,
         clientY,
         elements
@@ -138,9 +147,12 @@ export default function App() {
       updateElement(index, x1, y1, clientX, clientY, tool);
     } else if (action === "moving" && selectedElement) {
       const { id, x1, x2, y1, y2, type, offsetX, offsetY } = selectedElement;
-      const newX1 = clientX - offsetX;
-      const newY1 = clientY - offsetY;
-      // Calculate the new position for x2 and y2 based on the original size
+      // 🌶️ Check if offsetX and offsetY are defined, and provide a fallback value of 0 if not
+      const safeOffsetX = offsetX ?? 0;
+      const safeOffsetY = offsetY ?? 0;
+      const newX1 = clientX - safeOffsetX;
+      const newY1 = clientY - safeOffsetY;
+      // 🫐 Calculate the new position for x2 and y2 based on the original size
       const newX2 = newX1 + (x2 - x1);
       const newY2 = newY1 + (y2 - y1);
 
