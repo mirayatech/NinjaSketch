@@ -6,6 +6,7 @@ type ElementType = {
   y1: number;
   x2: number;
   y2: number;
+  type: Tools;
   // TODO: add type
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   roughElement: any;
@@ -28,13 +29,14 @@ export default function App() {
     x1: number,
     y1: number,
     x2: number,
-    y2: number
+    y2: number,
+    type: Tools
   ): ElementType => {
     const roughElement =
-      tool === Tools.Line
+      type === Tools.Line
         ? generator.line(x1, y1, x2, y2)
         : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
-    return { x1, y1, x2, y2, roughElement };
+    return { x1, y1, x2, y2, type, roughElement };
   };
 
   useLayoutEffect(() => {
@@ -50,16 +52,13 @@ export default function App() {
   }, [elements]);
 
   const handleMouseDown = (event: MouseEvent<HTMLCanvasElement>) => {
+    const { clientX, clientY } = event;
+
     if (tool === Tools.Selection) {
-      /*
-       TODO: implement selection
-      if we are on an element
-      setAction("moving"); 
-      */
+      // const element = getElementAtPosition(clientX, clientY, elements);
     } else {
       setAction("drawing");
-      const { clientX, clientY } = event;
-      const element = createElement(clientX, clientY, clientX, clientY);
+      const element = createElement(clientX, clientY, clientX, clientY, tool);
       setElements((prevState) => [...prevState, element]);
     }
   };
@@ -69,7 +68,7 @@ export default function App() {
       const index = elements.length - 1;
       const { clientX, clientY } = event;
       const { x1, y1 } = elements[index];
-      const updateElement = createElement(x1, y1, clientX, clientY);
+      const updateElement = createElement(x1, y1, clientX, clientY, tool);
 
       const elementsCopy = [...elements];
       elementsCopy[index] = updateElement;
