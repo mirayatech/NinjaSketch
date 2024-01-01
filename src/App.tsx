@@ -22,10 +22,11 @@ export default function App() {
   const [elements, setElements] = useState<ElementType[]>([]);
   const [action, setAction] = useState("none");
   const [tool, setTool] = useState<Tools>(Tools.Line);
-
+  const [selectedElement, setSelectedElement] = useState<ElementType | null>();
   const generator = rough.generator();
 
   const createElement = (
+    id: number,
     x1: number,
     y1: number,
     x2: number,
@@ -36,7 +37,33 @@ export default function App() {
       type === Tools.Line
         ? generator.line(x1, y1, x2, y2)
         : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
-    return { x1, y1, x2, y2, type, roughElement };
+    return { id, x1, y1, x2, y2, type, roughElement };
+  };
+
+  const distance = (a, b) =>
+    Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+
+  const isWithinElement = (x: number, y: number, element: ElementType) => {
+    const { type, x1, y1, x2, y2 } = element;
+
+    if (type === Tools.Rectangle) {
+      const minX = Math.min(x1, x2);
+      const maxX = Math.max(x1, x2);
+      const minY = Math.min(y1, y2);
+      const maxY = Math.max(y1, y2);
+      return x >= minX && x <= maxX && y >= minY && y <= maxY;
+    } else {
+      // Source: https://stackoverflow.com/questions/17692922/check-is-a-point-x-y-is-between-two-points-drawn-on-a-straight-line/17693146#17693146
+      const a = { x: x1, y: y1 };
+      const b = { x: x2, y: y2 };
+      const c = { x, y };
+      const offset = distance(a, b) - (distance(a, c) + distance(b, c));
+      return Math.abs(offset) < 1;
+    }
+  };
+
+  const getElementAtPosition = (x, y, elements) => {
+    return elements.find((element) => isWithinElement(x, y, element));
   };
 
   useLayoutEffect(() => {
@@ -51,28 +78,73 @@ export default function App() {
     });
   }, [elements]);
 
+  const updateElement = (
+    id: number,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    type: Tools
+  ) => {
+    const updateElement = createElement(id, x1, y1, x2, y2, type);
+
+    const elementsCopy = [...elements];
+    elementsCopy[id] = updateElement;
+    setElements(elementsCopy);
+  };
+
   const handleMouseDown = (event: MouseEvent<HTMLCanvasElement>) => {
     const { clientX, clientY } = event;
 
     if (tool === Tools.Selection) {
-      // const element = getElementAtPosition(clientX, clientY, elements);
+      const element = getElementAtPosition(clientX, clientY, elements);
+      if (element) {
+        const offsetX = clientX - element.x1;
+        const offsetY = clientY - element.y1;
+        setSelectedElement({ ...element, offsetX, offsetY });
+        setAction("moving");
+      }
     } else {
-      setAction("drawing");
-      const element = createElement(clientX, clientY, clientX, clientY, tool);
+      const id = elements.length;
+      const element = createElement(
+        id,
+        clientX,
+        clientY,
+        clientX,
+        clientY,
+        tool
+      );
       setElements((prevState) => [...prevState, element]);
+      setAction("drawing");
     }
   };
 
   const handleMouseMove = (event: MouseEvent<HTMLCanvasElement>) => {
+    const { clientX, clientY } = event;
+
+    if (tool === Tools.Selection) {
+      event.target.style.cursor = getElementAtPosition(
+        clientX,
+        clientY,
+        elements
+      )
+        ? "move"
+        : "default";
+    }
+
     if (action === "drawing") {
       const index = elements.length - 1;
-      const { clientX, clientY } = event;
       const { x1, y1 } = elements[index];
-      const updateElement = createElement(x1, y1, clientX, clientY, tool);
+      updateElement(index, x1, y1, clientX, clientY, tool);
+    } else if (action === "moving" && selectedElement) {
+      const { id, x1, x2, y1, y2, type, offsetX, offsetY } = selectedElement;
+      const newX1 = clientX - offsetX;
+      const newY1 = clientY - offsetY;
+      // Calculate the new position for x2 and y2 based on the original size
+      const newX2 = newX1 + (x2 - x1);
+      const newY2 = newY1 + (y2 - y1);
 
-      const elementsCopy = [...elements];
-      elementsCopy[index] = updateElement;
-      setElements(elementsCopy);
+      updateElement(id, newX1, newY1, newX2, newY2, type);
     }
   };
 
