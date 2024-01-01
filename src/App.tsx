@@ -11,10 +11,16 @@ type ElementType = {
   roughElement: any;
 };
 
+enum Tools {
+  Selection = "selection",
+  Line = "line",
+  Rectangle = "rectangle",
+}
+
 export default function App() {
   const [elements, setElements] = useState<ElementType[]>([]);
-  const [drawing, setDrawing] = useState(false);
-  const [elementType, setElementType] = useState<"line" | "rectangle">("line");
+  const [action, setAction] = useState("none");
+  const [tool, setTool] = useState<Tools>(Tools.Line);
 
   const generator = rough.generator();
 
@@ -25,7 +31,7 @@ export default function App() {
     y2: number
   ): ElementType => {
     const roughElement =
-      elementType === "line"
+      tool === Tools.Line
         ? generator.line(x1, y1, x2, y2)
         : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
     return { x1, y1, x2, y2, roughElement };
@@ -44,41 +50,56 @@ export default function App() {
   }, [elements]);
 
   const handleMouseDown = (event: MouseEvent<HTMLCanvasElement>) => {
-    setDrawing(true);
-    const { clientX, clientY } = event;
-    const element = createElement(clientX, clientY, clientX, clientY);
-    setElements((prevState) => [...prevState, element]);
+    if (tool === Tools.Selection) {
+      /*
+       TODO: implement selection
+      if we are on an element
+      setAction("moving"); 
+      */
+    } else {
+      setAction("drawing");
+      const { clientX, clientY } = event;
+      const element = createElement(clientX, clientY, clientX, clientY);
+      setElements((prevState) => [...prevState, element]);
+    }
   };
 
   const handleMouseMove = (event: MouseEvent<HTMLCanvasElement>) => {
-    if (!drawing) {
-      return;
+    if (action === "drawing") {
+      const index = elements.length - 1;
+      const { clientX, clientY } = event;
+      const { x1, y1 } = elements[index];
+      const updateElement = createElement(x1, y1, clientX, clientY);
+
+      const elementsCopy = [...elements];
+      elementsCopy[index] = updateElement;
+      setElements(elementsCopy);
     }
-
-    const index = elements.length - 1;
-    const { clientX, clientY } = event;
-    const { x1, y1 } = elements[index];
-    const updateElement = createElement(x1, y1, clientX, clientY);
-
-    const elementsCopy = [...elements];
-    elementsCopy[index] = updateElement;
-    setElements(elementsCopy);
   };
 
   const handleMouseUp = () => {
-    setDrawing(false);
+    setAction("none");
   };
 
   return (
     <div>
       <div style={{ position: "fixed" }}>
         <button onClick={() => setElements([])}>Clear</button>
+
+        <input
+          type="radio"
+          name="selection"
+          id="selection"
+          checked={tool === Tools.Selection}
+          onChange={() => setTool(Tools.Selection)}
+        />
+        <label htmlFor="selection">selection</label>
         <input
           type="radio"
           name="line"
           id="line"
-          checked={elementType === "line"}
-          onChange={() => setElementType("line")}
+          checked={tool === Tools.Line}
+          onChange={() => setTool(Tools.Line)}
         />
         <label htmlFor="line">line</label>
 
@@ -86,8 +107,8 @@ export default function App() {
           type="radio"
           name="rectangle"
           id="rectangle"
-          checked={elementType === "rectangle"}
-          onChange={() => setElementType("rectangle")}
+          checked={tool === Tools.Rectangle}
+          onChange={() => setTool(Tools.Rectangle)}
         />
 
         <label htmlFor="rectangle">rectangle</label>
@@ -100,7 +121,7 @@ export default function App() {
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
       >
-        Canvas{" "}
+        Canvas
       </canvas>
     </div>
   );
