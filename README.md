@@ -44,15 +44,17 @@ export default function App() {
 
 ### 2️⃣ Drawing the canvas with rough.js
 
-When I press the mouse down, the `handleMouseDown` function activates. It indicates I'm starting to draw by setting the `drawing` state to true. This means I'm beginning a new shape right where my cursor is at. The shape I draw, a line or rectangle, is decided by my previous choice and tracked by the `elementType` state.
+When I press the mouse down, the `handleMouseDown` function activates. It indicates I'm starting to draw by setting the `drawing` state to true. This means I'm beginning a new shape right where my cursor is at. The shape I draw, a line or rectangle, is decided by my previous choice and tracked by the `elementType` state, and the radio buttons let me switch between lines and rectangles.
 
-While I move the mouse, the `handleMouseMove` function activates. If I'm drawing, the shape follows my cursor. On the technical side, I find the last thing I started drawing, which happens on `const index = elements.length - 1;`. Then I grab the current position of my mouse, which is here `const { clientX, clientY } = event;`. Then the `const { x1, y1 } = elements[index];` finds the starting point of the shape I'm drawing, basically remembering the first corner or end of my line. Then I use the starting point and current mouse position to update the shape I'm drawing, which happens here `const updateElement = createElement(x1, y1, clientX, clientY);`. Then a copy of all my drawings is being made and replaces the last shape I started, which is the one I'm currently drawing with the updated version. And then it is being stored in the `elements` State.
+While I move the mouse, the `handleMouseMove` function activates. If I'm drawing, the shape follows my cursor.
+
+On the technical side, I find the last drawing I started with `const index = elements.length - 1;`. I then capture my mouse's current position with `const { clientX, clientY } = event;`. The `const { x1, y1 } = elements[index];` gets the starting point of my current shape, basically marking the first corner or line end. Using the initial and current positions, I update the shape I'm drawing with `const updateElement = createElement(x1, y1, clientX, clientY);`. Next, I make a copy of all my drawings and update the most recent one, the shape I'm currently changing, with the new version. This updated collection is then saved back into the `elements` state.
 
 The drawing stops when I release the mouse, which the `handleMouseUp` function handles, ending the drawing.
 
 I store every stroke and shape in an array, which is the `elements` state, and `useLayoutEffect` redraws the canvas with each new addition.
 
-The clear button empties the array for a fresh canvas and the radio buttons let me switch between lines and rectangles.
+The clear button empties the array for a fresh canvas.
 
 ```javascript
 import { MouseEvent, useLayoutEffect, useState } from "react";
