@@ -14,7 +14,7 @@ In the `useLayoutEffect`, I first grab the canvas from the webpage and prepare i
 
 It clears any previous drawings to start fresh. Then, I use rough.js to make the drawings look sketchy and hand-drawn.
 
-A rectangle is drawn on this prepared canvas. All of this is done before the browser updates the display, which means the drawing appears all at once. Smoothly and without any visual interruptions.
+A rectangle is drawn on this prepared canvas. All of this is done before the browser updates the display, which means the drawing appears all at once.
 
 ```javascript
 import { useLayoutEffect } from "react";
@@ -34,6 +34,121 @@ export default function App() {
   return (
     <div>
       <canvas id="canvas" width={window.innerWidth} height={window.innerHeight}>
+        Canvas
+      </canvas>
+    </div>
+  );
+}
+```
+
+### 2️⃣ Drawing the canvas with rough.js
+
+When I press the mouse down, the `handleMouseDown` function activates. It indicates I'm starting to draw by setting the `drawing` state to true. This means I'm beginning a new shape right where my cursor is at. The shape I draw, a line or rectangle, is decided by my previous choice and tracked by the `elementType` state.
+
+While I move the mouse, the `handleMouseMove` function activates. If I'm drawing, the shape follows my cursor. On the technical side, I find the last thing I started drawing, which happens on `const index = elements.length - 1;`. Then I grab the current position of my mouse, which is here `const { clientX, clientY } = event;`. Then the `const { x1, y1 } = elements[index];` finds the starting point of the shape I'm drawing, basically remembering the first corner or end of my line. Then I use the starting point and current mouse position to update the shape I'm drawing, which happens here `const updateElement = createElement(x1, y1, clientX, clientY);`. Then a copy of all my drawings is being made and replaces the last shape I started, which is the one I'm currently drawing with the updated version. And then it is being stored in the `elements` State.
+
+The drawing stops when I release the mouse, which the `handleMouseUp` function handles, ending the drawing.
+
+I store every stroke and shape in an array, which is the `elements` state, and `useLayoutEffect` redraws the canvas with each new addition.
+
+The clear button empties the array for a fresh canvas and the radio buttons let me switch between lines and rectangles.
+
+```javascript
+import { MouseEvent, useLayoutEffect, useState } from "react";
+import rough from "roughjs";
+
+type ElementType = {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  // TODO: add type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  roughElement: any;
+};
+
+export default function App() {
+  const [elements, setElements] = useState<ElementType[]>([]);
+  const [drawing, setDrawing] = useState(false);
+  const [elementType, setElementType] = useState<"line" | "rectangle">("line");
+
+  const generator = rough.generator();
+
+  const createElement = (
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number
+  ): ElementType => {
+    const roughElement =
+      elementType === "line"
+        ? generator.line(x1, y1, x2, y2)
+        : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
+    return { x1, y1, x2, y2, roughElement };
+  };
+
+  useLayoutEffect(() => {
+    const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    const roughCanvas = rough.canvas(canvas);
+    elements.forEach(({ roughElement }) => {
+      roughCanvas.draw(roughElement);
+    });
+  }, [elements]);
+
+  const handleMouseDown = (event: MouseEvent<HTMLCanvasElement>) => {
+    setDrawing(true);
+    const { clientX, clientY } = event;
+    const element = createElement(clientX, clientY, clientX, clientY);
+    setElements((prevState) => [...prevState, element]);
+  };
+
+  const handleMouseMove = (event: MouseEvent<HTMLCanvasElement>) => {
+    if (!drawing) {
+      return;
+    }
+    const index = elements.length - 1;
+    const { clientX, clientY } = event;
+    const { x1, y1 } = elements[index];
+    const updateElement = createElement(x1, y1, clientX, clientY);
+    const elementsCopy = [...elements];
+    elementsCopy[index] = updateElement;
+    setElements(elementsCopy);
+  };
+
+  const handleMouseUp = () => {
+    setDrawing(false);
+  };
+  return (
+    <div>
+      <div style={{ position: "fixed" }}>
+        <button onClick={() => setElements([])}>Clear</button>
+        <input
+          type="radio"
+          name="line"
+          id="line"
+          checked={elementType === "line"}
+          onChange={() => setElementType("line")}
+        />
+        <label htmlFor="line">line</label>
+        <input
+          type="radio"
+          name="rectangle"
+          id="rectangle"
+          checked={elementType === "rectangle"}
+          onChange={() => setElementType("rectangle")}
+        />
+        <label htmlFor="rectangle">rectangle</label>
+      </div>
+      <canvas
+        id="canvas"
+        width={window.innerWidth}
+        height={window.innerHeight}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+      >
         Canvas
       </canvas>
     </div>
