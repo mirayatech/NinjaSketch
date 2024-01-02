@@ -6,13 +6,12 @@ The primary purpose of this project is for learning and educational purposes.
 
 More updates coming soon...
 
-<details> 
-<summary><h2>🎬 Behind the Scenes: Building NinjaSketch</h2> 
+## 🎬 Behind the Scenes: Building NinjaSketch
  
 A step by step guide on how I created this. The code is often changed as I'm always adjusting it for the best results. 🔮
- </summary>
 
-### 1️⃣ Rendering canvas with rough.js
+<details> 
+<summary><h3> 1️⃣ Rendering canvas with rough.js </h3> </summary>  
 
 In the `useLayoutEffect`, I first grab the canvas from the webpage and prepare it for drawing. I'm doing this because I don't want old sketches to mix with the new one, ensuring a clean and clear drawing every time.
 
@@ -44,8 +43,9 @@ export default function App() {
   );
 }
 ```
-
-### 2️⃣ Drawing the canvas with rough.js
+</details>
+<details>
+<summary><h3>2️⃣ Drawing the canvas</h3> </summary>  
 
 When I press the mouse down, the `handleMouseDown` function activates. It indicates I'm starting to draw by setting the `drawing` state to true. This means I'm beginning a new shape right where my cursor is at. The shape I draw, a line or rectangle, is decided by my previous choice and tracked by the `elementType` state, and the radio buttons let me switch between lines and rectangles.
 
