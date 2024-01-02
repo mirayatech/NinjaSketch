@@ -6,7 +6,8 @@ The primary purpose of this project is for learning and educational purposes.
 
 More updates coming soon...
 
-# 🎬 Behind the Scenes: Building Ninja Sketch
+<details> 
+<summary><h2>🎬 Behind the Scenes: Building Ninja Sketch</h2></summary>
 
 ### 1️⃣ Rendering canvas with rough.js
 
@@ -155,3 +156,5 @@ export default function App() {
   );
 }
 ```
+
+</details>
