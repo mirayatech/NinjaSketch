@@ -1,4 +1,4 @@
-# 🎨 Ninja Sketch
+# 🎨 NinjaSketch
 
 I'm building an Excalidraw clone with React and TypeScript. For the sketch-like designs, rough.js is being utilized. Rough.js is used for the sketchy, hand-drawn style, similar to what you see in Excalidraw.
 
@@ -7,8 +7,9 @@ The primary purpose of this project is for learning and educational purposes.
 More updates coming soon...
 
 <details> 
-<summary><h2>🎬 Behind the Scenes: Building Ninja Sketch</h2>  
-<h3>A step by step guide on how I created this. The code is often changed as I'm always adjusting it for the best results.</h3>
+<summary><h2>🎬 Behind the Scenes: Building NinjaSketch</h2> 
+ 
+A step by step guide on how I created this. The code is often changed as I'm always adjusting it for the best results. 🔮
  </summary>
 
 ### 1️⃣ Rendering canvas with rough.js
