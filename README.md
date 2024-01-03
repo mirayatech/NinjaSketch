@@ -206,7 +206,9 @@ else {
 
 <img src='./public/line.png' />
 
-So if the cursor is almost as far from the lines ends as the line is long, it's "on" the line. I learned this method from [stack overflow](https://stackoverflow.com/questions/17692922/check-is-a-point-x-y-is-between-two-points-drawn-on-a-straight-line/17693146#17693146).
+So if the cursor is almost as far from the lines ends as the line is long, it's "on" the line.
+
+I learned the line method from [stack overflow](https://stackoverflow.com/questions/17692922/check-is-a-point-x-y-is-between-two-points-drawn-on-a-straight-line/17693146#17693146).
 
 The `distance` function just helps me find out how far apart two points are.
 
