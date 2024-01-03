@@ -58,7 +58,6 @@ export default function App() {
       const maxY = Math.max(y1, y2);
       return x >= minX && x <= maxX && y >= minY && y <= maxY;
     } else {
-      // 💭 Source: https://stackoverflow.com/questions/17692922/check-is-a-point-x-y-is-between-two-points-drawn-on-a-straight-line/17693146#17693146
       const a = { x: x1, y: y1 };
       const b = { x: x2, y: y2 };
       const c = { x, y };
@@ -147,7 +146,6 @@ export default function App() {
       updateElement(index, x1, y1, clientX, clientY, tool);
     } else if (action === "moving" && selectedElement) {
       const { id, x1, x2, y1, y2, type, offsetX, offsetY } = selectedElement;
-      // 🌶️ Check if offsetX and offsetY are defined, and provide a fallback value of 0 if not
       const safeOffsetX = offsetX ?? 0;
       const safeOffsetY = offsetY ?? 0;
       const newX1 = clientX - safeOffsetX;
