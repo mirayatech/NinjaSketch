@@ -13,6 +13,7 @@ type ElementType = {
   roughElement: any;
   offsetX?: number;
   offsetY?: number;
+  position?: string | null;
 };
 
 enum Tools {
@@ -27,6 +28,68 @@ export default function App() {
   const [tool, setTool] = useState<Tools>(Tools.Line);
   const [selectedElement, setSelectedElement] = useState<ElementType | null>();
   const generator = rough.generator();
+
+  const cursorForPosition = (position: string) => {
+    switch (position) {
+      case "topLeft":
+      case "bottomRight":
+        return "nwse-resize";
+      case "topRight":
+      case "bottomLeft":
+        return "nesw-resize";
+      case "start":
+      case "end":
+        return "move";
+      case "inside":
+        return "move";
+      default:
+        return "default";
+    }
+  };
+
+  const resizedCoordinates = (
+    clientX: number,
+    clientY: number,
+    position: string,
+    coordinates: { x1: number; y1: number; x2: number; y2: number }
+  ) => {
+    const { x1, y1, x2, y2 } = coordinates;
+
+    switch (position) {
+      case "start":
+      case "topLeft":
+        return {
+          x1: clientX,
+          y1: clientY,
+          x2,
+          y2,
+        };
+      case "topRight":
+        return {
+          x1,
+          y1: clientY,
+          x2: clientX,
+          y2,
+        };
+      case "bottomLeft":
+        return {
+          x1: clientX,
+          y1,
+          x2,
+          y2: clientY,
+        };
+      case "end":
+      case "bottomRight":
+        return {
+          x1,
+          y1,
+          x2: clientX,
+          y2: clientY,
+        };
+      default:
+        return coordinates;
+    }
+  };
 
   const createElement = (
     id: number,
@@ -48,7 +111,43 @@ export default function App() {
   const distance = (a: Point, b: Point) =>
     Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 
-  const isWithinElement = (x: number, y: number, element: ElementType) => {
+  const nearPoint = (
+    x: number,
+    y: number,
+    x1: number,
+    y1: number,
+    name: string
+  ) => {
+    return Math.abs(x - x1) < 5 && Math.abs(y - y1) < 5 ? name : null;
+  };
+
+  const positionWithinElement = (
+    x: number,
+    y: number,
+    element: ElementType
+  ) => {
+    const { type, x1, y1, x2, y2 } = element;
+
+    if (type === Tools.Rectangle) {
+      const topLeft = nearPoint(x, y, x1, y1, "topLeft");
+      const topRight = nearPoint(x, y, x2, y1, "topRight");
+      const bottomLeft = nearPoint(x, y, x1, y2, "bottomLeft");
+      const bottomRight = nearPoint(x, y, x2, y2, "bottomRight");
+      const inside = x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
+      return topLeft || topRight || bottomLeft || bottomRight || inside;
+    } else {
+      const a = { x: x1, y: y1 };
+      const b = { x: x2, y: y2 };
+      const c = { x, y };
+      const offset = distance(a, b) - (distance(a, c) + distance(b, c));
+      const start = nearPoint(x, y, x1, y1, "start");
+      const end = nearPoint(x, y, x2, y2, "end");
+      const inside = Math.abs(offset) < 1 ? "inside" : null;
+      return start || end || inside;
+    }
+  };
+
+  const adjustElementCoordinates = (element: ElementType) => {
     const { type, x1, y1, x2, y2 } = element;
 
     if (type === Tools.Rectangle) {
@@ -56,13 +155,13 @@ export default function App() {
       const maxX = Math.max(x1, x2);
       const minY = Math.min(y1, y2);
       const maxY = Math.max(y1, y2);
-      return x >= minX && x <= maxX && y >= minY && y <= maxY;
+      return { x1: minX, y1: minY, x2: maxX, y2: maxY };
     } else {
-      const a = { x: x1, y: y1 };
-      const b = { x: x2, y: y2 };
-      const c = { x, y };
-      const offset = distance(a, b) - (distance(a, c) + distance(b, c));
-      return Math.abs(offset) < 1;
+      if (x1 < x2 || (x1 === x2 && y1 < y2)) {
+        return { x1, y1, x2, y2 };
+      } else {
+        return { x1: x2, y1: y2, x2: x1, y2: y1 };
+      }
     }
   };
 
@@ -71,7 +170,12 @@ export default function App() {
     y: number,
     elements: ElementType[]
   ) => {
-    return elements.find((element) => isWithinElement(x, y, element));
+    return elements
+      .map((element) => ({
+        ...element,
+        position: positionWithinElement(x, y, element),
+      }))
+      .find((element) => element.position !== null);
   };
 
   useLayoutEffect(() => {
@@ -110,7 +214,12 @@ export default function App() {
         const offsetX = clientX - element.x1;
         const offsetY = clientY - element.y1;
         setSelectedElement({ ...element, offsetX, offsetY });
-        setAction("moving");
+
+        if (element.position === "inside") {
+          setAction("moving");
+        } else {
+          setAction("resizing");
+        }
       }
     } else {
       const id = elements.length;
@@ -123,6 +232,7 @@ export default function App() {
         tool
       );
       setElements((prevState) => [...prevState, element]);
+      setSelectedElement(element);
       setAction("drawing");
     }
   };
@@ -131,13 +241,15 @@ export default function App() {
     const { clientX, clientY } = event;
 
     if (tool === Tools.Selection) {
-      (event.target as HTMLElement).style.cursor = getElementAtPosition(
-        clientX,
-        clientY,
-        elements
-      )
-        ? "move"
-        : "default";
+      const element = getElementAtPosition(clientX, clientY, elements);
+
+      if (element && element.position) {
+        (event.target as HTMLElement).style.cursor = cursorForPosition(
+          element.position
+        );
+      } else {
+        (event.target as HTMLElement).style.cursor = "default";
+      }
     }
 
     if (action === "drawing") {
@@ -155,10 +267,33 @@ export default function App() {
       const newY2 = newY1 + (y2 - y1);
 
       updateElement(id, newX1, newY1, newX2, newY2, type);
+    } else if (
+      action === "resizing" &&
+      selectedElement &&
+      selectedElement.position
+    ) {
+      const { id, type, position, ...coordinates } = selectedElement;
+
+      const { x1, y1, x2, y2 } = resizedCoordinates(
+        clientX,
+        clientY,
+        position,
+        coordinates
+      );
+      updateElement(id, x1, y1, x2, y2, type);
     }
   };
 
   const handleMouseUp = () => {
+    if (action === "drawing" || action === "resizing") {
+      if (selectedElement) {
+        const index = selectedElement.id;
+        const { id, type } = elements[index];
+        const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
+        updateElement(id, x1, y1, x2, y2, type);
+      }
+    }
+
     setAction("none");
   };
 
