@@ -794,3 +794,79 @@ export default function App() {
 ```
 
 </details>
+
+<details>
+<summary><h3>5️⃣ Undo & Redo Elements </h3></summary>
+
+I created a hook called `useHistory` to keep track of the elements I've drawn.
+
+The `history` is an array of all the elements I've drawn. The `index` is the current element I'm on.
+
+The `setElements` function is a wrapper around the `setState` function. It lets me update the current element or add a new one. The `undo` function goes back one element in the `history` array. The `redo` function goes forward one element in the `history` array.
+
+That way I can undo and redo my drawings and making sure I don't lose any work.
+
+```javascript
+import { useState } from "react";
+import { ElementType } from "./App";
+
+export const useHistory = (initialState: ElementType[]) => {
+  const [index, setIndex] = useState(0);
+  const [history, setHistory] = useState([initialState]);
+
+  const setState = (
+    action: ElementType[] | ((current: ElementType[]) => ElementType[]),
+    overwrite = false
+  ) => {
+    const newState =
+      typeof action === "function" ? action(history[index]) : action;
+    if (overwrite) {
+      const historyCopy = [...history];
+      historyCopy[index] = newState;
+      setHistory(historyCopy);
+    } else {
+      const updatedState = [...history].slice(0, index + 1);
+      setHistory([...updatedState, newState]);
+      setIndex((prevState) => prevState + 1);
+    }
+  };
+
+  const undo = () => index > 0 && setIndex((prevState) => prevState - 1);
+  const redo = () =>
+    index < history.length - 1 && setIndex((prevState) => prevState + 1);
+
+  return {
+    elements: history[index],
+    setElements: setState,
+    undo,
+    redo,
+  };
+};
+```
+
+In the `useEffect` hook, I listen for the `ctrl+z` and `ctrl+shift+z` keyboard shortcuts. If I press `ctrl+z`, I undo. If I press `ctrl+y`, I redo.
+
+```javascript
+useEffect(() => {
+  const undoRedoFunction = (event: KeyboardEvent) => {
+    if (event.ctrlKey || event.metaKey) {
+      if (event.key === "z") {
+        if (event.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+      } else if (event.key === "y") {
+        redo();
+      }
+    }
+  };
+
+  document.addEventListener("keydown", undoRedoFunction);
+  return () => {
+    document.removeEventListener("keydown", undoRedoFunction);
+  };
+}, [undo, redo]);
+```
+
+</details>
