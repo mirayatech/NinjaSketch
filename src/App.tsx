@@ -24,7 +24,7 @@ enum Tools {
 }
 
 export default function App() {
-  const [elements, setElements, undo, redo] = useHistory([]);
+  const { elements, setElements, undo, redo } = useHistory([]);
   const [action, setAction] = useState("none");
   const [tool, setTool] = useState<Tools>(Tools.Line);
   const [selectedElement, setSelectedElement] = useState<ElementType | null>();

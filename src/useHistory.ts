@@ -1,10 +1,14 @@
 import { useState } from "react";
+import { ElementType } from "./App";
 
-export const useHistory = (initialState) => {
+export const useHistory = (initialState: ElementType[]) => {
   const [index, setIndex] = useState(0);
   const [history, setHistory] = useState([initialState]);
 
-  const setState = (action, overwrite = false) => {
+  const setState = (
+    action: ElementType[] | ((current: ElementType[]) => ElementType[]),
+    overwrite = false
+  ) => {
     const newState =
       typeof action === "function" ? action(history[index]) : action;
     if (overwrite) {
@@ -22,5 +26,10 @@ export const useHistory = (initialState) => {
   const redo = () =>
     index < history.length - 1 && setIndex((prevState) => prevState + 1);
 
-  return [history[index], setState, undo, redo];
+  return {
+    elements: history[index],
+    setElements: setState,
+    undo,
+    redo,
+  };
 };
