@@ -28,11 +28,11 @@ export type ElementType = {
 };
 
 export enum Tools {
-  Pencil = "pencil",
-  Line = "line",
-  Text = "text",
-  Rectangle = "rectangle",
   Selection = "selection",
+  Rectangle = "rectangle",
+  Line = "line",
+  Pencil = "pencil",
+  Text = "text",
 }
 
 export type Point = { x: number; y: number };
