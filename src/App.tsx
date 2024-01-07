@@ -9,41 +9,12 @@ import rough from "roughjs";
 import getStroke from "perfect-freehand";
 import { useHistory } from "./hooks/useHistory";
 import { usePressedKeys } from "./hooks/usePressedKeys";
-
-type SelectedElementType = ElementType & {
-  xOffsets?: number[];
-  yOffsets?: number[];
-  offsetX?: number;
-  offsetY?: number;
-};
-interface ExtendedElementType extends ElementType {
-  xOffsets?: number[];
-  yOffsets?: number[];
-}
-export type ElementType = {
-  id: number;
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  type: Tools;
-  // TODO: add type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  roughElement?: any;
-  offsetX?: number;
-  offsetY?: number;
-  position?: string | null;
-  points?: { x: number; y: number }[];
-  text?: string;
-};
-
-enum Tools {
-  Pencil = "pencil",
-  Line = "line",
-  Text = "text",
-  Rectangle = "rectangle",
-  Selection = "selection",
-}
+import {
+  Tools,
+  SelectedElementType,
+  ExtendedElementType,
+  ElementType,
+} from "./types";
 
 export default function App() {
   const { elements, setElements, undo, redo } = useHistory([]);
