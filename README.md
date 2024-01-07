@@ -1521,45 +1521,45 @@ The `createElement` function was also updated to handle the new text and render 
 In the `positionWithinElement` function, I added a `Text` case to handle the new text and render it on the canvas. It checks if the mouse is inside the text box, by checking if the mouse coordinates are within the text box coordinates.
 
 ```javascript
-      case Tools.Text:
-        return x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
+case Tools.Text:
+  return x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
 ```
 
 In the `drawElement` function, I added a `Text` case to handle the new text and render it on the canvas. It uses the `fillText` function to render the text on the canvas.
 
 ```javascript
-    case "text": {
-        context.textBaseline = "top";
-        context.font = "24px sans-serif";
-        const text = element.text || "";
-        context.fillText(text, element.x1, element.y1);
-        break;
-      }
+case "text": {
+    context.textBaseline = "top";
+    context.font = "24px sans-serif";
+    const text = element.text || "";
+    context.fillText(text, element.x1, element.y1);
+    break;
+  }
 ```
 
 `updateElement` gets the text from the `options` object and uses the `measureText` function to get the width and height of the text. Then it uses the `createElement` function to create the text element.
 
 ```javascript
- case Tools.Text: {
-        const canvas = document.getElementById("canvas");
-        if (!(canvas instanceof HTMLCanvasElement)) {
+case Tools.Text: {
+      const canvas = document.getElementById("canvas");
+      if (!(canvas instanceof HTMLCanvasElement)) {
           throw new Error("Canvas element not found");
-        }
-        const context = canvas.getContext("2d");
-        if (!context) {
-          throw new Error("Could not get 2D context from canvas");
-        }
-        if (!options) {
-          throw new Error("No text options provided for text tool");
-        }
-        const textWidth = context.measureText(options.text).width;
-        const textHeight = 24;
-        elementsCopy[id] = {
-          ...createElement(id, x1, y1, x1 + textWidth, y1 + textHeight, type),
-          text: options.text,
-        };
-        break;
       }
+      const context = canvas.getContext("2d");
+      if (!context) {
+          throw new Error("Could not get 2D context from canvas");
+      }
+      if (!options) {
+          throw new Error("No text options provided for text tool");
+      }
+      const textWidth = context.measureText(options.text).width;
+      const textHeight = 24;
+      elementsCopy[id] = {
+        ...createElement(id, x1, y1, x1 + textWidth, y1 + textHeight, type),
+        text: options.text,
+      };
+      break;
+    }
 ```
 
 `handleMOuseUp` function was also updated to handle the new text and render them on the canvas. It checks if the mouse is inside the text box, by checking if the mouse coordinates are within the text box coordinates. If the mouse is inside the text box, it sets the action to `writing` and returns. If the mouse is not inside the text box, it sets the action to `none` and returns.
