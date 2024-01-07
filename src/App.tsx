@@ -457,6 +457,7 @@ export default function App() {
     if (event.button === 1) {
       setAction("panning");
       setStartPanMousePosition({ x: clientX, y: clientY });
+      document.body.style.cursor = "grabbing";
       return;
     }
 
@@ -614,6 +615,11 @@ export default function App() {
     if (action === "writing") {
       return;
     }
+
+    if (action === "panning") {
+      document.body.style.cursor = "default";
+    }
+
     setAction("none");
     setSelectedElement(null);
   };
