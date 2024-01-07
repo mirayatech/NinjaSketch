@@ -1752,3 +1752,159 @@ if (action === "panning") {
 ```
 
 </details>
+
+<details>
+<summary><h3>9️⃣ Add Zoom Tool</h3></summary>
+
+I created a new hook called `usePressedKeys` to keep track of the keys I've pressed. It returns a `Set` of the keys I've pressed. I use the `useEffect` hook to listen for the `keydown` and `keyup` events. When I press a key, it adds the key to the `pressedKeys` state. When I release a key, it removes the key from the `pressedKeys` state.
+
+```javascript
+import { useEffect, useState } from "react";
+
+export const usePressedKeys = () => {
+  const [pressedKeys, setPressedKeys] = useState < Set < string >> new Set();
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      setPressedKeys((prevKeys) => new Set(prevKeys).add(event.key));
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      setPressedKeys((prevKeys) => {
+        const updatedKeys = new Set(prevKeys);
+        updatedKeys.delete(event.key);
+        return updatedKeys;
+      });
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
+  return pressedKeys;
+};
+```
+
+Two `usestate` has been added. The first one `scale` and `setScale` and the secodn one is `scaleOffset` and `setScaleOffset`. The `scale` is used to keep track of the scale of the canvas. The `scaleOffset` is used to keep track of the offset of the canva,because the offset changes when the canvas is scaled.
+
+```javascript
+const [scale, setScale] = useState(1);
+const [scaleOffset, setScaleOffset] = useState({ x: 0, y: 0 });
+```
+
+In the `useLayoutEffect` hook, I put the `scale` and `scaleOffset` into the `context.translate` function. This scales the canvas by the `scale` amount. The value of `scaleOf` is subtracted from the `panOffset` because the offset changes when the canvas is scaled. `context.translate()` is called before `context.scale()` because the `context.translate()` function moves the canvas by the `scaleOffset` amount. I used `context.save()` to make sure that only the canvas is scaled, not the other things on the page. Then, `context.restore()` puts the canvas back the way it was.
+
+```javascript
+  useLayoutEffect(() => {
+    const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const roughCanvas = rough.canvas(canvas);
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    const scaledWidth = canvas.width * scale;
+    const scaledHeight = canvas.height * scale;
+    const scaleOffsetX = (scaledWidth - canvas.width) / 2;
+    const scaleOffsetY = (scaledHeight - canvas.height) / 2;
+    setScaleOffset({ x: scaleOffsetX, y: scaleOffsetY });
+
+    context.save();
+    context.translate(
+      panOffset.x * scale - scaleOffsetX,
+      panOffset.y * scale - scaleOffsetY
+    );
+    context.scale(scale, scale);
+
+    elements.forEach((element) => {
+      if (
+        action === "writing" &&
+        selectedElement &&
+        selectedElement.id === element.id
+      )
+        return;
+      drawElement(roughCanvas, context, element);
+    });
+    context.restore();
+  }, [elements, action, selectedElement, panOffset, scale]);
+```
+
+In the `useEffect`, I've renamed `panFunction` to `panOrZoomFunction` and added a condition to check if I've pressed the `Meta` or `Control` key. If I have, it changes the `scale` by the `deltaY` amount. If I haven't, it changes the `panOffset` by the `deltaX` and `deltaY` amounts.
+
+```javascript
+useEffect(() => {
+  const panOrZoomFunction = (event: WheelEvent) => {
+    if (pressedKeys.has("Meta") || pressedKeys.has("Control")) {
+      onZoom(event.deltaY * -0.01);
+    } else {
+      setPanOffset((prevState) => ({
+        x: prevState.x - event.deltaX,
+        y: prevState.y - event.deltaY,
+      }));
+    }
+  };
+
+  document.addEventListener("wheel", panOrZoomFunction);
+  return () => {
+    document.removeEventListener("wheel", panOrZoomFunction);
+  };
+}, [pressedKeys]);
+```
+
+`getMouseCoordinates` function has been updated to take the `scale` and `scaleOffset` into account. It takes the `event` as an argument and gives back the `clientX` and `clientY` positions. The `clientX` is then reduced by the `panOffset.x` and `clientY` is reduced by the `panOffset.y` because the canvas moves by the `panOffset` amount. The `clientX` is then divided by the `scale` and the `clientY` is divided by the `scale`. The `clientX` is then reduced by the `scaleOffset.x` and the `clientY` is reduced by the `scaleOffset.y` because the canvas moves by the `scaleOffset` amount.
+
+```javascript
+const getMouseCoordinates = (event: MouseEvent) => {
+  const clientX = (event.clientX - panOffset.x * scale + scaleOffset.x) / scale;
+  const clientY = (event.clientY - panOffset.y * scale + scaleOffset.y) / scale;
+  return { clientX, clientY };
+};
+```
+
+I created the fucntion `onZoom` to handle the zooming. It takes the `delta` as an argument and gives back the `scale`. `delta` in this case means the amount the user has scrolled the mouse wheel. The `scale` is then reduced by the `delta` amount. The `scale` is then passed into the `setScale` function. The `setScale` function makes sure that the `scale` is between 0.1 and 20.
+
+```javascript
+const onZoom = (delta: number) => {
+  setScale((prevState) => Math.min(Math.max(prevState + delta, 0.1), 20));
+};
+```
+
+I've added two buttons to the canvas. One button is for zooming in and the other one is for zooming out. The `onZoom` function is called when the user clicks on the buttons. The `onZoom` function takes the `delta` as an argument. The `delta` is set to 0.1 when the user clicks on the zoom in button and -0.1 when the user clicks on the zoom out button.
+
+```javascript
+<button onClick={() => onZoom(-0.1)}>-</button>
+<span onClick={() => setScale(1)}>{new Intl.NumberFormat("en-GB", { style: "percent" }).format(scale)}</span>
+<button onClick={() => onZoom(0.1)}>+</button>
+```
+
+In the textarea I've change the `top` and `left` properties to take the `scale` and `scaleOffset` into account. The `scale` and `scaleOffset` are used to make sure that the text is in the right place when the canvas is scaled.
+
+```javascript
+<textarea
+  ref={textAreaRef}
+  onBlur={handleBlur}
+  style={{
+    position: "fixed",
+    top: selectedElement
+      ? (selectedElement.y1 - 2) * scale + panOffset.y * scale - scaleOffset.y
+      : 0,
+    left: selectedElement
+      ? selectedElement.x1 * scale + panOffset.x * scale - scaleOffset.x
+      : 0,
+    font: `${24 * scale}px sans-serif`,
+    margin: 0,
+    padding: 0,
+    border: 0,
+    outline: 0,
+    overflow: "hidden",
+    whiteSpace: "pre",
+    background: "transparent",
+    zIndex: 2,
+  }}
+/>
+```
+
+</details>
