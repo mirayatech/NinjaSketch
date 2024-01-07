@@ -1510,3 +1510,148 @@ export default function App() {
 ```
 
 </details>
+
+<details>
+<summary><h3>7️⃣ Add text to hml canvas</h3></summary>
+
+I've added the `Text` tool for adding text to the canvas. In the `Tools` enum, `Text` has also been added.
+
+The `createElement` function was also updated to handle the new text and render it on the canvas.
+
+In the `positionWithinElement` function, I added a `Text` case to handle the new text and render it on the canvas. It checks if the mouse is inside the text box, by checking if the mouse coordinates are within the text box coordinates.
+
+```javascript
+      case Tools.Text:
+        return x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
+```
+
+In the `drawElement` function, I added a `Text` case to handle the new text and render it on the canvas. It uses the `fillText` function to render the text on the canvas.
+
+```javascript
+    case "text": {
+        context.textBaseline = "top";
+        context.font = "24px sans-serif";
+        const text = element.text || "";
+        context.fillText(text, element.x1, element.y1);
+        break;
+      }
+```
+
+`updateElement` gets the text from the `options` object and uses the `measureText` function to get the width and height of the text. Then it uses the `createElement` function to create the text element.
+
+```javascript
+ case Tools.Text: {
+        const canvas = document.getElementById("canvas");
+        if (!(canvas instanceof HTMLCanvasElement)) {
+          throw new Error("Canvas element not found");
+        }
+        const context = canvas.getContext("2d");
+        if (!context) {
+          throw new Error("Could not get 2D context from canvas");
+        }
+        if (!options) {
+          throw new Error("No text options provided for text tool");
+        }
+        const textWidth = context.measureText(options.text).width;
+        const textHeight = 24;
+        elementsCopy[id] = {
+          ...createElement(id, x1, y1, x1 + textWidth, y1 + textHeight, type),
+          text: options.text,
+        };
+        break;
+      }
+```
+
+`handleMOuseUp` function was also updated to handle the new text and render them on the canvas. It checks if the mouse is inside the text box, by checking if the mouse coordinates are within the text box coordinates. If the mouse is inside the text box, it sets the action to `writing` and returns. If the mouse is not inside the text box, it sets the action to `none` and returns.
+
+```javascript
+const handleMouseUp = (event: MouseEvent<HTMLCanvasElement>) => {
+  const { clientX, clientY } = event;
+
+  if (selectedElement) {
+    const index = selectedElement.id;
+    const { id, type } = elements[index];
+    if (
+      (action === "drawing" || action === "resizing") &&
+      adjustmentRequired(type)
+    ) {
+      const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
+      updateElement(id, x1, y1, x2, y2, type);
+    }
+
+    const offsetX = selectedElement.offsetX || 0;
+    const offsetY = selectedElement.offsetY || 0;
+
+    if (
+      selectedElement.type === "text" &&
+      clientX - offsetX === selectedElement.x1 &&
+      clientY - offsetY === selectedElement.y1
+    ) {
+      setAction("writing");
+      return;
+    }
+  }
+
+  if (action === "writing") {
+    return;
+  }
+  setAction("none");
+  setSelectedElement(null);
+};
+```
+
+I created `handleBlur` to make sure the text is saved when the user clicks outside the text box. It checks if the selected element is not null. If it is not null, it gets the id, coordinates, type and text from the selected element. Then it sets the action to `none` and selected element to `null`. Finally, it uses the `updateElement` function to update the text element.
+
+```javascript
+const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
+  if (selectedElement) {
+    const { id, x1, y1, type } = selectedElement;
+
+    const x2 = selectedElement.x2 || x1;
+    const y2 = selectedElement.y2 || y1;
+
+    setAction("none");
+    setSelectedElement(null);
+    updateElement(id, x1, y1, x2, y2, type, { text: event.target.value });
+  } else {
+    console.error("No element selected when handleBlur was called");
+  }
+};
+```
+
+A textearea has been added to the canvas. It is hidden by default. When the user clicks on the canvas, it checks if the action is `writing`. If it is, it sets the textarea to visible and focuses on it. If it is not, it sets the textarea to hidden. The `top` and `left` properties of the textarea are set to the coordinates of the selected element. The `onBlur` event handler is set to `handleBlur` function.
+
+```javascript
+{
+  action === "writing" ? (
+    <textarea
+      ref={textAreaRef}
+      name="text"
+      id="text"
+      style={{
+        position: "fixed",
+        top:
+          selectedElement && selectedElement.y1 !== undefined
+            ? `${selectedElement.y1 - 2}px`
+            : "0",
+        left:
+          selectedElement && selectedElement.x1 !== undefined
+            ? `${selectedElement.x1}px`
+            : "0",
+        font: "24px sans-serif",
+        margin: 0,
+        padding: 0,
+        border: 0,
+        outline: "none",
+        overflow: "hidden",
+        whiteSpace: "pre",
+        background: "transparent",
+        zIndex: 2,
+      }}
+      onBlur={handleBlur}
+    />
+  ) : null;
+}
+```
+
+</details>
