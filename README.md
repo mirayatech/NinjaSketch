@@ -1655,3 +1655,100 @@ A textearea has been added to the canvas. It is hidden by default. When the user
 ```
 
 </details>
+
+<details>
+<summary><h3>8️⃣ Add Pan Tool </h3></summary>
+
+Two `useState`, first one is `panOffset` and `setPanOffset` and the second one is `startPanMousePosition` and `setStartPanMousePosition` are added to the `App` component. The `panOffset` is used to keep track of the offset of the canvas. The `startPanMousePosition` is used to keep track of the mouse position when the user starts panning the canvas.
+
+```javascript
+const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+const [startPanMousePosition, setStartPanMousePosition] = useState({
+  x: 0,
+  y: 0,
+});
+```
+
+In the `useLayoutEffect` hook, I put the `panOffset` into the `context.translate` function. This moves the canvas by the `panOffset` amount. I used `context.save()` to make sure that only the canvas is moved, not the other things on the page. Then, `context.restore()` puts the canvas back the way it was.
+
+```javascript
+  useLayoutEffect(() => {
+    const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const roughCanvas = rough.canvas(canvas);
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    context.save();
+    context.translate(panOffset.x, panOffset.y);
+
+    elements.forEach((element) => {
+      if (
+        action === "writing" &&
+        selectedElement &&
+        selectedElement.id === element.id
+      )
+        return;
+      drawElement(roughCanvas, context, element);
+    });
+    context.restore();
+  }, [elements, action, selectedElement, panOffset]);
+```
+
+The `useEffect` hook, with the `panFunction`, makes sure that the `panOffset` is updated whenever the user scrolls the mouse wheel. I use the `setPanOffset` function to change the `panOffset` state.
+
+```javascript
+useEffect(() => {
+  const panFunction = (event: WheelEvent) => {
+    setPanOffset((prevState) => ({
+      x: prevState.x - event.deltaX,
+      y: prevState.y - event.deltaY,
+    }));
+  };
+
+  document.addEventListener("wheel", panFunction);
+  return () => {
+    document.removeEventListener("wheel", panFunction);
+  };
+}, []);
+```
+
+The `getMouseCoordinates` function is used to find out where the mouse is. It takes the `event` as an argument and gives back the `clientX` and `clientY` positions. The `clientX` is then reduced by the `panOffset.x` and `clientY` is reduced by the `panOffset.y` because the canvas moves by the `panOffset` amount.
+
+```javascript
+const getMouseCoordinates = (event: MouseEvent) => {
+  const clientX = event.clientX - panOffset.x;
+  const clientY = event.clientY - panOffset.y;
+  return { clientX, clientY };
+};
+```
+
+My `handleMouseDown` function has a condition that checks if I click the middle mouse button. If I do, it changes the action to `panning` and sets the `startPanMousePosition` to the current mouse coordinates.
+
+```javascript
+const { clientX, clientY } = getMouseCoordinates(event);
+
+if (event.button === 1) {
+  setAction("panning");
+  setStartPanMousePosition({ x: clientX, y: clientY });
+  return;
+}
+```
+
+`handleMouseMove` also has a condition. It checks if I've clicked the middle mouse button. If I have, it changes the `panOffset` to the difference between the `startPanMousePosition` and the current mouse coordinates. Then, it updates the `startPanMousePosition` to the new mouse coordinates.
+
+```javascript
+const { clientX, clientY } = getMouseCoordinates(event);
+
+if (action === "panning") {
+  const deltaX = clientX - startPanMousePosition.x;
+  const deltaY = clientY - startPanMousePosition.y;
+  setPanOffset({
+    x: panOffset.x + deltaX,
+    y: panOffset.y + deltaY,
+  });
+  return;
+}
+```
+
+</details>
