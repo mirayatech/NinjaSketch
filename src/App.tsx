@@ -8,6 +8,7 @@ import {
 import rough from "roughjs";
 import getStroke from "perfect-freehand";
 import { useHistory } from "./hooks/useHistory";
+import { usePressedKeys } from "./hooks/usePressedKeys";
 
 type SelectedElementType = ElementType & {
   xOffsets?: number[];
@@ -54,9 +55,11 @@ export default function App() {
   const [action, setAction] = useState("none");
   const [tool, setTool] = useState<Tools>(Tools.Text);
   const [selectedElement, setSelectedElement] = useState<ElementType | null>();
+  const [scale, setScale] = useState(1);
+  const [scaleOffset, setScaleOffset] = useState({ x: 0, y: 0 });
   const generator = rough.generator();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
+  const pressedKeys = usePressedKeys();
   const cursorForPosition = (position: string) => {
     switch (position) {
       case "topLeft":
@@ -333,8 +336,18 @@ export default function App() {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    const scaledWidth = canvas.width * scale;
+    const scaledHeight = canvas.height * scale;
+    const scaleOffsetX = (scaledWidth - canvas.width) / 2;
+    const scaleOffsetY = (scaledHeight - canvas.height) / 2;
+    setScaleOffset({ x: scaleOffsetX, y: scaleOffsetY });
+
     context.save();
-    context.translate(panOffset.x, panOffset.y);
+    context.translate(
+      panOffset.x * scale - scaleOffsetX,
+      panOffset.y * scale - scaleOffsetY
+    );
+    context.scale(scale, scale);
 
     elements.forEach((element) => {
       if (
@@ -346,7 +359,7 @@ export default function App() {
       drawElement(roughCanvas, context, element);
     });
     context.restore();
-  }, [elements, action, selectedElement, panOffset]);
+  }, [elements, action, selectedElement, panOffset, scale]);
 
   useEffect(() => {
     const undoRedoFunction = (event: KeyboardEvent) => {
@@ -370,18 +383,22 @@ export default function App() {
   }, [undo, redo]);
 
   useEffect(() => {
-    const panFunction = (event: WheelEvent) => {
-      setPanOffset((prevState) => ({
-        x: prevState.x - event.deltaX,
-        y: prevState.y - event.deltaY,
-      }));
+    const panOrZoomFunction = (event: WheelEvent) => {
+      if (pressedKeys.has("Meta") || pressedKeys.has("Control")) {
+        onZoom(event.deltaY * -0.01);
+      } else {
+        setPanOffset((prevState) => ({
+          x: prevState.x - event.deltaX,
+          y: prevState.y - event.deltaY,
+        }));
+      }
     };
 
-    document.addEventListener("wheel", panFunction);
+    document.addEventListener("wheel", panOrZoomFunction);
     return () => {
-      document.removeEventListener("wheel", panFunction);
+      document.removeEventListener("wheel", panOrZoomFunction);
     };
-  }, []);
+  }, [pressedKeys]);
 
   useEffect(() => {
     const textArea = textAreaRef.current;
@@ -444,8 +461,10 @@ export default function App() {
     ["line", "rectangle"].includes(type);
 
   const getMouseCoordinates = (event: MouseEvent) => {
-    const clientX = event.clientX - panOffset.x;
-    const clientY = event.clientY - panOffset.y;
+    const clientX =
+      (event.clientX - panOffset.x * scale + scaleOffset.x) / scale;
+    const clientY =
+      (event.clientY - panOffset.y * scale + scaleOffset.y) / scale;
     return { clientX, clientY };
   };
 
@@ -454,7 +473,7 @@ export default function App() {
 
     const { clientX, clientY } = getMouseCoordinates(event);
 
-    if (event.button === 1) {
+    if (event.button === 1 || pressedKeys.has(" ")) {
       setAction("panning");
       setStartPanMousePosition({ x: clientX, y: clientY });
       document.body.style.cursor = "grabbing";
@@ -639,6 +658,10 @@ export default function App() {
     }
   };
 
+  const onZoom = (delta: number) => {
+    setScale((prevState) => Math.min(Math.max(prevState + delta, 0.1), 20));
+  };
+
   return (
     <div>
       <div style={{ position: "fixed", zIndex: 2 }}>
@@ -681,6 +704,12 @@ export default function App() {
       <div style={{ position: "fixed", zIndex: 2, bottom: 0, padding: 10 }}>
         <button onClick={undo}>Undo</button>
         <button onClick={redo}>Redo</button>
+
+        <button onClick={() => onZoom(-0.1)}>-</button>
+        <span onClick={() => setScale(1)}>
+          {new Intl.NumberFormat("en-GB", { style: "percent" }).format(scale)}
+        </span>
+        <button onClick={() => onZoom(0.1)}>+</button>
       </div>
       {action === "writing" ? (
         <textarea
@@ -688,9 +717,15 @@ export default function App() {
           onBlur={handleBlur}
           style={{
             position: "fixed",
-            top: selectedElement ? selectedElement.y1 - 2 + panOffset.y : 0,
-            left: selectedElement ? selectedElement.x1 + panOffset.x : 0,
-            font: "24px sans-serif",
+            top: selectedElement
+              ? (selectedElement.y1 - 2) * scale +
+                panOffset.y * scale -
+                scaleOffset.y
+              : 0,
+            left: selectedElement
+              ? selectedElement.x1 * scale + panOffset.x * scale - scaleOffset.x
+              : 0,
+            font: `${24 * scale}px sans-serif`,
             margin: 0,
             padding: 0,
             border: 0,
