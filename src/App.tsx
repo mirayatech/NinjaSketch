@@ -23,7 +23,7 @@ import {
   drawElement,
   adjustmentRequired,
 } from "./library/utilities";
-import { ActionBar, ControlPanel } from "./components";
+import { ActionBar, ControlPanel, Info } from "./components";
 
 export default function App() {
   const { elements, setElements, undo, redo } = useHistory([]);
@@ -372,6 +372,7 @@ export default function App() {
 
   return (
     <div>
+      <Info />
       <ActionBar tool={tool} setTool={setTool} />
       <ControlPanel
         undo={undo}
