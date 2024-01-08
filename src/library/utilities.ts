@@ -201,6 +201,7 @@ export const getElementAtPosition = (
     .find((element) => element.position !== null);
 };
 
+// 🥑 source: https://www.npmjs.com/package/perfect-freehand/v/1.0.4
 export const getSvgPathFromStroke = (stroke: [number, number][]) => {
   if (!stroke.length) return "";
 
