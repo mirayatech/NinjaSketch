@@ -33,7 +33,7 @@ export function Info() {
           id="customized-dialog-title"
           className="DialogTitle"
         >
-          How to Use ExcaliDraw
+          How to Use NinjaSketch
         </DialogTitle>
         <IconButton
           aria-label="close"
