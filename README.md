@@ -1,6 +1,6 @@
 # 🥷 NinjaSketch
 
-An Excalidraw clone with React and TypeScript. Rough.js is used for the sketchy, hand-drawn style.
+An Excalidraw clone with React and TypeScript. Rough.js is used for the sketchy, hand-drawn style. The app is not responsive. I mainly focused on the functionalities since I already have plenty of projects that are responsive.
 
 ## 📦 Technologies
 
