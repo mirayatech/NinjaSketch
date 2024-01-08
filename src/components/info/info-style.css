@@ -1,0 +1,64 @@
+.infoButton {
+  z-index: 2;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background-color: var(--primary);
+  transition: background-color 0.3s;
+}
+
+.infoButton * {
+  color: var(--primary-bg-color);
+}
+
+.infoButton:hover {
+  background-color: var(--primary-hover);
+}
+
+.infoContent {
+  padding: 20px;
+  max-width: 500px;
+  line-height: 1.6;
+  color: var(--primary-text-color);
+}
+
+.infoContent p {
+  font-weight: bold;
+}
+
+.infoContent ul {
+  list-style: none;
+  margin: 10px 0 20px;
+}
+
+.infoContent li {
+  margin-bottom: 10px;
+}
+
+.infoContent strong {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.DialogTitle {
+  background-color: var(--primary);
+  color: var(--primary-bg-color);
+  text-align: center;
+}
+
+.DialogTitle h2 {
+  font-size: 1.5em;
+}
+
+.IconButton {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+}
+
+.CloseIcon {
+  color: var(--primary-bg-color);
+}
