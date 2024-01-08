@@ -1,0 +1,86 @@
+.controlPanel {
+  width: 300px;
+  display: flex;
+  gap: 20px;
+  position: fixed;
+  z-index: 2;
+  bottom: 20px;
+  left: 20px;
+}
+
+.controlPanel button {
+  padding: 10px 15px;
+}
+
+.controlPanel button:hover {
+  background-color: var(--hover-bg-color);
+}
+
+.zoomPanel {
+  border-radius: 8px;
+  display: flex;
+  background-color: var(--panel-bg-color);
+}
+
+.zoomPanel button,
+.editPanel button,
+.link {
+  border: none;
+  color: #27272c;
+  font-size: 0.625em;
+  background-color: transparent;
+}
+
+.zoomPanel button svg {
+  width: 15px;
+  height: 15px;
+  color: #27272c;
+}
+
+.editPanel {
+  border-radius: 8px;
+  display: flex;
+  background-color: var(--panel-bg-color);
+}
+
+.editPanel button svg {
+  width: 15px;
+  height: 15px;
+  color: #27272c;
+}
+
+.editPanel button:first-child,
+.zoomPanel button:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.editPanel button:last-child,
+.zoomPanel button:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.link {
+  z-index: 2;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background-color: var(--panel-bg-color);
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 0.75em;
+}
+
+.link svg {
+  width: 18px;
+  height: 18px;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
