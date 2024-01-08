@@ -27,13 +27,13 @@
 .link {
   border: none;
   color: #27272c;
-  font-size: 0.625em;
+  font-size: 0.9em;
   background-color: transparent;
 }
 
 .zoomPanel button svg {
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   color: #27272c;
 }
 
@@ -44,8 +44,8 @@
 }
 
 .editPanel button svg {
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   color: #27272c;
 }
 
@@ -73,7 +73,6 @@
   background-color: var(--panel-bg-color);
   padding: 10px 15px;
   text-decoration: none;
-  font-size: 0.75em;
 }
 
 .link svg {
