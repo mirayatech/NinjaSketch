@@ -3,7 +3,6 @@ describe("Interactive Canvas Text Operations", () => {
     cy.visit("/");
     cy.wait(500);
 
-    // Open the information dialog
     cy.findByRole("button", { name: "Open information dialog" }).should(
       "be.visible"
     );
@@ -12,18 +11,15 @@ describe("Interactive Canvas Text Operations", () => {
     cy.findByRole("button", { name: "close" }).click();
     cy.wait(500);
 
-    // Select the text tool
     cy.findByLabelText("text").click();
     cy.wait(500);
 
-    // Add text
     cy.get("#canvas")
       .trigger("mousedown", { clientX: 100, clientY: 100 })
       .trigger("mouseup");
     cy.get(".textArea").type("Hello, World!").blur();
     cy.wait(500);
 
-    // Select the selection tool
     cy.findByLabelText("selection").click();
     cy.wait(500);
 
@@ -31,7 +27,6 @@ describe("Interactive Canvas Text Operations", () => {
     const canvasWidth = Cypress.config("viewportWidth");
     const canvasHeight = Cypress.config("viewportHeight");
 
-    // Move the text to the middle of the canvas
     cy.get("#canvas")
       .trigger("mousedown", { clientX: 100, clientY: 100 })
       .trigger("mousemove", {
@@ -41,14 +36,12 @@ describe("Interactive Canvas Text Operations", () => {
       .trigger("mouseup");
     cy.wait(500);
 
-    // Zoom in to focus on the text
     cy.findByRole("button", { name: "Zoom In" }).should("be.visible");
     for (let i = 0; i < 10; i++) {
       cy.findByRole("button", { name: "Zoom In" }).click();
     }
     cy.wait(500);
 
-    // Change the text content
     cy.get("#canvas")
       .trigger("mousedown", {
         clientX: canvasWidth / 2,
@@ -58,13 +51,11 @@ describe("Interactive Canvas Text Operations", () => {
     cy.get(".textArea").clear().type("Miraya is here!").blur();
     cy.wait(500);
 
-    // Undo the text change
     cy.findByRole("button", { name: "Undo last action" })
       .should("be.visible")
       .click();
     cy.wait(500);
 
-    // Redo the text change
     cy.findByRole("button", { name: "Redo last action" })
       .should("be.visible")
       .click();
