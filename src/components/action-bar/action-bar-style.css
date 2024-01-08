@@ -1,0 +1,77 @@
+.actionBar {
+  top: 20px;
+  z-index: 2;
+  padding: 10px;
+  position: fixed;
+  background-color: var(--primary-bg-color);
+  left: 50%;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  transform: translateX(-50%);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 1px 3px 0 var(--shadow-color),
+    0 1px 2px -1px var(--shadow-color);
+}
+
+.inputWrapper {
+  position: relative;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  padding: 10px;
+  background-color: var(--primary-bg-color);
+  transition: background-color 0.3s;
+}
+
+.inputWrapper:hover {
+  background-color: var(--secondary-bg-color);
+}
+
+.inputWrapper.selected {
+  background-color: var(--selected-bg-color);
+}
+
+.inputWrapper.selected svg,
+.inputWrapper.selected span {
+  color: var(--highlight-color);
+}
+
+input {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  opacity: 0;
+}
+
+label {
+  cursor: pointer;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+svg {
+  color: var(--primary-text-color);
+  cursor: pointer;
+  display: flex;
+  width: 18px;
+  height: 18px;
+  position: absolut;
+  transition: color 0.3s;
+}
+
+span {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  font-size: 0.615em;
+  color: var(--secondary-text-color);
+}
