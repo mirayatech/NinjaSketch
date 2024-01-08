@@ -1,7 +1,8 @@
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 import "./control-panel-style.css";
 import { PiMinus, PiPlus } from "react-icons/pi";
 import { FiGithub } from "react-icons/fi";
-
 import {
   HiOutlineArrowUturnLeft,
   HiOutlineArrowUturnRight,
@@ -26,24 +27,39 @@ export function ControlPanel({
     <>
       <div className="controlPanel">
         <div className="zoomPanel">
-          <button onClick={() => onZoom(-0.1)} aria-label="Zoom Out">
-            <PiMinus />
-          </button>
-          <button onClick={() => setScale(1)} aria-label={`Set scale to 100%`}>
-            {new Intl.NumberFormat("en-GB", { style: "percent" }).format(scale)}
-          </button>
-          <button onClick={() => onZoom(0.1)} aria-label="Zoom In">
-            <PiPlus />
-          </button>
+          <Tippy content="Zoom Out">
+            <button onClick={() => onZoom(-0.1)} aria-label="Zoom Out">
+              <PiMinus />
+            </button>
+          </Tippy>
+          <Tippy content={`Set scale to 100%`}>
+            <button
+              onClick={() => setScale(1)}
+              aria-label={`Set scale to 100%`}
+            >
+              {new Intl.NumberFormat("en-GB", { style: "percent" }).format(
+                scale
+              )}
+            </button>
+          </Tippy>
+          <Tippy content="Zoom In">
+            <button onClick={() => onZoom(0.1)} aria-label="Zoom In">
+              <PiPlus />
+            </button>
+          </Tippy>
         </div>
 
         <div className="editPanel">
-          <button onClick={undo} aria-label="Undo last action">
-            <HiOutlineArrowUturnLeft />
-          </button>
-          <button onClick={redo} aria-label="Redo last action">
-            <HiOutlineArrowUturnRight />
-          </button>
+          <Tippy content="Undo last action">
+            <button onClick={undo} aria-label="Undo last action">
+              <HiOutlineArrowUturnLeft />
+            </button>
+          </Tippy>
+          <Tippy content="Redo last action">
+            <button onClick={redo} aria-label="Redo last action">
+              <HiOutlineArrowUturnRight />
+            </button>
+          </Tippy>
         </div>
       </div>{" "}
       <a className="link" href="https://github.com/mirayatech" target="_blank">
