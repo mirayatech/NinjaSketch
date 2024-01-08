@@ -49,7 +49,7 @@ export function Info() {
           <CloseIcon className="CloseIcon" />
         </IconButton>
         <div className="infoContent">
-          <p>Welcome to ExcaliDraw! Get started with these simple steps:</p>
+          <p>Welcome to NinjaSketch! Get started with these simple steps:</p>
           <ul>
             <li>
               <strong>Choose a Tool:</strong> Select from pencil, line,
