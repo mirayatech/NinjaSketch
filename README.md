@@ -2008,5 +2008,11 @@ In the textarea I've change the `top` and `left` properties to take the `scale` 
   }}
 />
 ```
-
 </details>
+
+## 🎬 Video
+
+ https://github.com/mirayatech/NinjaSketch/assets/71933266/6a16c9e5-6380-4317-96e7-d132768f7b40
+
+
+
