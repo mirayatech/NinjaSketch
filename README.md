@@ -1,10 +1,63 @@
-# 🎨 NinjaSketch
+# 🥷 NinjaSketch
 
-I'm building an Excalidraw clone with React and TypeScript. For the sketch-like designs, rough.js is being utilized. Rough.js is used for the sketchy, hand-drawn style, similar to what you see in Excalidraw.
+An Excalidraw clone with React and TypeScript. Rough.js is used for the sketchy, hand-drawn style.
 
-The primary purpose of this project is for learning and educational purposes.
+## 📦 Technologies
 
-More updates coming soon...
+- `Vite`
+- `React.js`
+- `TypeScript`
+- `Rough.js`
+- `CSS`
+- `Cypress`
+- `Testing Library`
+
+## 🦄 Features
+
+Here's what you can do with NinjaSketch:
+
+- **Choose a Tool**: You have pencils, lines, rectangles, and text tools. Pick one and start creating.
+
+- **Draw and Move**: Click and drag on the canvas to draw. To move something, select it and drag it to a new spot. Also, resize elements by dragging the corners. Resizing only works on rectangles or lines.
+
+- **Edit Text**: Click on the canvas and start typing to add text to your drawings. You can also edit existing text.
+
+- **Zoom**: Use Ctrl + Scroll or click on the buttons to zoom in for detail or out to see the whole picture.
+
+- **Pan**: Hold the Space bar and drag or use the middle mouse button to move around the whiteboard canvas.
+
+### 🎯 Keyboard Shortcuts:
+
+Speed up your work with these shortcuts:
+
+- **Canvas Navigation**: Press the Space bar and drag or use the middle mouse button.
+- **Undo**: Ctrl + Z.
+- **Redo**: Ctrl + Y or Ctrl + Shift + Z.
+- **Zoom In**: Ctrl + Plus.
+- **Zoom Out**: Ctrl + Minus.
+
+## 👩🏽‍🍳 The Process
+
+I started by rendering a canvas with rough.js to create the base for all the drawings. Then, I focused on drawing on the canvas, allowing users to make lines, rectangles, and other shapes.
+
+Next, I made sure users could move elements around. This was crucial for adjusting drawings. After that, I added the ability to resize elements to give more control over the shapes.
+
+To make sure mistakes could be fixed, I implemented undo and redo features. I also added freehand drawing for a more natural sketching experience and a text tool to label or note on the canvas.
+
+To navigate larger drawings, I put in pan and zoom tools. With everything functioning, I designed the whole UI to make it user-friendly and appealing.
+
+Finally, I added testing with Cypress and Testing Library. I conducted end-to-end tests on drawing and manipulating text, lines, rectangles, and freehand drawings to make sure everything worked smoothly.
+
+## 💭 How can it be improved?
+
+- Add more colors to the color picker.
+- Add more tools like a circle, eraser, and more.
+- Add more shapes like triangles, stars, and more.
+- Add more themes like dark mode, light mode, and more.
+- Add more text options like font size, font color, and more.
+- Add more keyboard shortcuts to make things faster.
+
+<!-- TODO: DO NOT DISTURB -->
 
 ## 🎬 Behind the Scenes: Building NinjaSketch
 
@@ -1908,3 +1961,12 @@ In the textarea I've change the `top` and `left` properties to take the `scale` 
 ```
 
 </details>
+
+## 🚦 Running the Project
+
+To run the project in your local environment, follow these steps:
+
+1. Clone the repository to your local machine.
+2. Run `npm install` or `yarn` in the project directory to install the required dependencies.
+3. Run `npm run start` or `yarn start` to get the project started.
+4. Open [http://localhost:5173](http://localhost:5173) (or the address shown in your console) in your web browser to view the app.
