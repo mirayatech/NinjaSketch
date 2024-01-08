@@ -48,6 +48,45 @@ To navigate larger drawings, I put in pan and zoom tools. With everything functi
 
 Finally, I added testing with Cypress and Testing Library. I conducted end-to-end tests on drawing and manipulating text, lines, rectangles, and freehand drawings to make sure everything worked smoothly.
 
+Along the way, while building everything, I took notes on what I've learned so I don't miss out on it. I also documented the behind-the-scenes processes every time a feature was added. This way, I understood what I've built. The funny thing is, as soon as I started to document what happened behind the scenes and the features I've added, it made me realize that we fully understand something once we've actually taken a step back, thought about it, and documented what we've done. I think this is a good practice to follow when learning something new.
+
+## 📚 What I Learned
+
+During this project, I've picked up important skills and a better understanding of complex ideas, which improved my logical thinking. Here's what I've learned:
+
+### 🧠 `useHistory` Hook:
+
+- **Logical Thinking**: Creating the `useHistory` hook taught me to think about how to manage saving, undoing, and redoing actions. I had to really understand how to track changes and plan out user actions.
+
+### 📏 Coordinates and Measurements:
+
+- **Accuracy**: I've become better at working with shapes and points, like knowing if a point is inside a shape. This required careful measurements.
+- **Math Skills**: I used math functions to make sure everything was placed correctly and to calculate distances.
+
+### 🎨 Discovering Rough.js:
+
+- **New Tools**: I found out about Rough.js, which lets me make graphics look hand-drawn. This was a new and exciting tool for me.
+
+### 🔍 Deep Dive into Functions:
+
+- **Complex Functions**: I spent time understanding the `getSvgPathFromStroke` function, which turns drawing movements into smooth paths.
+
+### ✏️ Managing Points and Drawing:
+
+- **Working with Points**: I learned how to collect and use points from drawings, which involved understanding and managing data to reflect what the user does.
+
+### 🎣 React Hooks and Rendering:
+
+- **New Knowledge**: I learned about `useLayoutEffect`, which helps make sure changes are done before the screen updates. This was useful for certain drawing functions.
+
+### 🎡 Advanced Event Handling:
+
+- **User Interaction**: I worked with the wheel event listener, which allowed me to add zooming and panning features. This made the app more interactive and user-friendly.
+
+### 📈 Overall Growth:
+
+Each part of this project helped me understand more about building apps, managing complex information, and improving user experience. It was more than just making a tool. It was about solving problems, learning new things, and improving my skills for future work.
+
 ## 💭 How can it be improved?
 
 - Add more colors to the color picker.
@@ -56,6 +95,16 @@ Finally, I added testing with Cypress and Testing Library. I conducted end-to-en
 - Add more themes like dark mode, light mode, and more.
 - Add more text options like font size, font color, and more.
 - Add more keyboard shortcuts to make things faster.
+- Instead of have any in two places, create a type for the rough.js elements.
+
+## 🚦 Running the Project
+
+To run the project in your local environment, follow these steps:
+
+1. Clone the repository to your local machine.
+2. Run `npm install` or `yarn` in the project directory to install the required dependencies.
+3. Run `npm run start` or `yarn start` to get the project started.
+4. Open [http://localhost:5173](http://localhost:5173) (or the address shown in your console) in your web browser to view the app.
 
 <!-- TODO: DO NOT DISTURB -->
 
@@ -64,7 +113,7 @@ Finally, I added testing with Cypress and Testing Library. I conducted end-to-en
 A step by step guide on how I created this. The code is often changed as I'm always adjusting it for the best results. 🔮
 
 <details> 
-<summary><h3> 1️⃣ Rendering canvas with rough.js </h3> </summary>
+<summary><h4> 1️⃣ Rendering canvas with rough.js </h4> </summary>
 
 In the `useLayoutEffect`, I first grab the canvas from the webpage and prepare it for drawing. I'm doing this because I don't want old sketches to mix with the new one, ensuring a clean and clear drawing every time.
 
@@ -99,7 +148,7 @@ export default function App() {
 
 </details>
 <details>
-<summary><h3>2️⃣ Drawing the canvas</h3> </summary>
+<summary><h4>2️⃣ Drawing the canvas</h4> </summary>
 
 When I press the mouse down, the `handleMouseDown` function activates. It indicates I'm starting to draw by setting the `drawing` state to true. This means I'm beginning a new shape right where my cursor is at. The shape I draw, a line or rectangle, is decided by my previous choice and tracked by the `elementType` state, and the radio buttons let me switch between lines and rectangles.
 
@@ -219,7 +268,7 @@ export default function App() {
 </details>
 
 <details>
-<summary><h3>3️⃣ Moving Elements</h3></summary>
+<summary><h4>3️⃣ Moving Elements</h4></summary>
 
 I've renamed `elementType` and `setElementType` to `tools` and `setTools` to make it clearer. Now, I pick from different tools using radio buttons, not just setting an element type.
 
@@ -480,7 +529,7 @@ export default function App() {
 </details>
 
 <details>
-<summary><h3>4️⃣ Resizing Elements </h3></summary>
+<summary><h4>4️⃣ Resizing Elements </h4></summary>
 
 `cursorForPosition` figures out which cursor to show when I'm hovering over an element. For example, if I'm hovering over the top left corner of a rectangle, I want to show the "nwse-resize" cursor.
 
@@ -849,7 +898,7 @@ export default function App() {
 </details>
 
 <details>
-<summary><h3>5️⃣ Undo & Redo Elements</h3></summary>
+<summary><h4>5️⃣ Undo & Redo Elements</h4></summary>
 
 I created a hook called `useHistory` to keep track of the elements I've drawn.
 
@@ -925,7 +974,7 @@ useEffect(() => {
 </details>
 
 <details>
-<summary><h3>6️⃣ Freehand Drawing</h3></summary>
+<summary><h4>6️⃣ Freehand Drawing</h4></summary>
 
 I've added the `Pencil` tool for freehand drawing. In the `Tools` enum, `Pencil` has also been added.
 
@@ -1565,7 +1614,7 @@ export default function App() {
 </details>
 
 <details>
-<summary><h3>7️⃣ Add text to hml canvas</h3></summary>
+<summary><h4>7️⃣ Add text to hml canvas</h4></summary>
 
 I've added the `Text` tool for adding text to the canvas. In the `Tools` enum, `Text` has also been added.
 
@@ -1710,7 +1759,7 @@ A textearea has been added to the canvas. It is hidden by default. When the user
 </details>
 
 <details>
-<summary><h3>8️⃣ Add Pan Tool </h3></summary>
+<summary><h4>8️⃣ Add Pan Tool </h4></summary>
 
 Two `useState`, first one is `panOffset` and `setPanOffset` and the second one is `startPanMousePosition` and `setStartPanMousePosition` are added to the `App` component. The `panOffset` is used to keep track of the offset of the canvas. The `startPanMousePosition` is used to keep track of the mouse position when the user starts panning the canvas.
 
@@ -1807,7 +1856,7 @@ if (action === "panning") {
 </details>
 
 <details>
-<summary><h3>9️⃣ Add Zoom Tool</h3></summary>
+<summary><h4>9️⃣ Add Zoom Tool</h4></summary>
 
 I created a new hook called `usePressedKeys` to keep track of the keys I've pressed. It returns a `Set` of the keys I've pressed. I use the `useEffect` hook to listen for the `keydown` and `keyup` events. When I press a key, it adds the key to the `pressedKeys` state. When I release a key, it removes the key from the `pressedKeys` state.
 
@@ -1961,12 +2010,3 @@ In the textarea I've change the `top` and `left` properties to take the `scale` 
 ```
 
 </details>
-
-## 🚦 Running the Project
-
-To run the project in your local environment, follow these steps:
-
-1. Clone the repository to your local machine.
-2. Run `npm install` or `yarn` in the project directory to install the required dependencies.
-3. Run `npm run start` or `yarn start` to get the project started.
-4. Open [http://localhost:5173](http://localhost:5173) (or the address shown in your console) in your web browser to view the app.
