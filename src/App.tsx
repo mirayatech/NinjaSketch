@@ -33,7 +33,7 @@ export default function App() {
     y: 0,
   });
   const [action, setAction] = useState("none");
-  const [tool, setTool] = useState<Tools>(Tools.Text);
+  const [tool, setTool] = useState<Tools>(Tools.Selection);
   const [selectedElement, setSelectedElement] = useState<ElementType | null>();
   const [scale, setScale] = useState(1);
   const [scaleOffset, setScaleOffset] = useState({ x: 0, y: 0 });
