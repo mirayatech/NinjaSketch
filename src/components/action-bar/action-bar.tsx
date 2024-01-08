@@ -15,12 +15,17 @@ export function ActionBar({ tool, setTool }: ActionBarProps) {
   return (
     <div className="actionBar">
       {Object.values(Tools).map((t, index) => (
-        <div className={`inputWrapper ${tool === t ? "selected" : ""}`} key={t}>
+        <div
+          className={`inputWrapper ${tool === t ? "selected" : ""}`}
+          key={t}
+          onClick={() => setTool(t)}
+        >
           <input
             type="radio"
             id={t}
             checked={tool === t}
             onChange={() => setTool(t)}
+            readOnly
           />
           <label htmlFor={t}>{t}</label>
           {t === "selection" && <LuMousePointer />}
