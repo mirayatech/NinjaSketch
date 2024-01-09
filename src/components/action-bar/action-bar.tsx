@@ -1,4 +1,4 @@
-import { Tools } from "../../types";
+import { Tools, ToolsType } from "../../types";
 
 import { LuMousePointer, LuPencil } from "react-icons/lu";
 import { FiSquare } from "react-icons/fi";
@@ -7,8 +7,8 @@ import { PiMinusBold } from "react-icons/pi";
 import "./action-bar-style.css";
 
 type ActionBarProps = {
-  tool: Tools;
-  setTool: (tool: Tools) => void;
+  tool: ToolsType;
+  setTool: (tool: ToolsType) => void;
 };
 
 export function ActionBar({ tool, setTool }: ActionBarProps) {

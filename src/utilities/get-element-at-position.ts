@@ -17,13 +17,13 @@ export const getElementAtPosition = (
 const positionWithinElement = (x: number, y: number, element: ElementType) => {
   const { type, x1, x2, y1, y2 } = element;
   switch (type) {
-    case Tools.Line: {
+    case Tools.line: {
       const on = onLine(x1, y1, x2, y2, x, y);
       const start = nearPoint(x, y, x1, y1, "start");
       const end = nearPoint(x, y, x2, y2, "end");
       return start || end || on;
     }
-    case Tools.Rectangle: {
+    case Tools.rectangle: {
       const topLeft = nearPoint(x, y, x1, y1, "topLeft");
       const topRight = nearPoint(x, y, x2, y1, "topRight");
       const bottomLeft = nearPoint(x, y, x1, y2, "bottomLeft");
@@ -31,7 +31,7 @@ const positionWithinElement = (x: number, y: number, element: ElementType) => {
       const inside = x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
       return topLeft || topRight || bottomLeft || bottomRight || inside;
     }
-    case Tools.Pencil: {
+    case Tools.pencil: {
       const betweenAnyPoint = element.points!.some((point, index) => {
         const nextPoint = element.points![index + 1];
         if (!nextPoint) return false;
@@ -41,7 +41,7 @@ const positionWithinElement = (x: number, y: number, element: ElementType) => {
       });
       return betweenAnyPoint ? "inside" : null;
     }
-    case Tools.Text:
+    case Tools.text:
       return x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
     default:
       throw new Error(`Type not recognised: ${type}`);

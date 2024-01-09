@@ -1,5 +1,5 @@
 import rough from "roughjs";
-import { Tools, ElementType } from "../types";
+import { Tools, ElementType, ToolsType } from "../types";
 
 export const createElement = (
   id: number,
@@ -7,20 +7,20 @@ export const createElement = (
   y1: number,
   x2: number,
   y2: number,
-  type: Tools
+  type: ToolsType
 ): ElementType => {
   const generator = rough.generator();
 
   switch (type) {
-    case Tools.Line:
-    case Tools.Rectangle: {
+    case Tools.line:
+    case Tools.rectangle: {
       const roughElement =
-        type === Tools.Line
+        type === Tools.line
           ? generator.line(x1, y1, x2, y2)
           : generator.rectangle(x1, y1, x2 - x1, y2 - y1);
       return { id, x1, y1, x2, y2, type, roughElement };
     }
-    case Tools.Pencil: {
+    case Tools.pencil: {
       const defaultRoughElement = null;
       return {
         id,
@@ -33,7 +33,7 @@ export const createElement = (
         roughElement: defaultRoughElement,
       };
     }
-    case Tools.Text:
+    case Tools.text:
       return { id, type, x1, y1, x2, y2, text: "" };
     default:
       throw new Error(`Type not recognised: ${type}`);
