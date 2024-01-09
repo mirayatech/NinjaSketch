@@ -27,6 +27,14 @@ export type ElementType = {
   text?: string;
 };
 
+export type ActionsType =
+  | "writing"
+  | "drawing"
+  | "moving"
+  | "panning"
+  | "resizing"
+  | "none";
+
 export const Tools = {
   selection: "selection",
   rectangle: "rectangle",

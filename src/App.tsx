@@ -14,6 +14,7 @@ import {
   ExtendedElementType,
   ElementType,
   Tools,
+  ActionsType,
 } from "./types";
 import { ActionBar, ControlPanel, Info } from "./components";
 import {
@@ -35,7 +36,7 @@ export default function App() {
     x: 0,
     y: 0,
   });
-  const [action, setAction] = useState("none");
+  const [action, setAction] = useState<ActionsType>("none");
   const [tool, setTool] = useState<ToolsType>(initialTool);
   const [selectedElement, setSelectedElement] = useState<ElementType | null>();
   const [scale, setScale] = useState(1);
