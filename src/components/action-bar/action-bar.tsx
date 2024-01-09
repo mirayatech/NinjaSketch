@@ -1,4 +1,4 @@
-import { Tools } from "../../library/types";
+import { Tools } from "../../types";
 
 import { LuMousePointer, LuPencil } from "react-icons/lu";
 import { FiSquare } from "react-icons/fi";

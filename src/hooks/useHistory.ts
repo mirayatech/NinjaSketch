@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ElementType } from "../library/types";
+import { ElementType } from "../types";
 
 export const useHistory = (initialState: ElementType[]) => {
   const [index, setIndex] = useState(0);
