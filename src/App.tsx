@@ -13,17 +13,17 @@ import {
   SelectedElementType,
   ExtendedElementType,
   ElementType,
-} from "./library/types";
+} from "./types";
+import { ActionBar, ControlPanel, Info } from "./components";
 import {
-  cursorForPosition,
+  adjustElementCoordinates,
+  adjustmentRequired,
   createElement,
+  cursorForPosition,
+  drawElement,
   getElementAtPosition,
   resizedCoordinates,
-  adjustElementCoordinates,
-  drawElement,
-  adjustmentRequired,
-} from "./library/utilities";
-import { ActionBar, ControlPanel, Info } from "./components";
+} from "./utilities";
 
 export default function App() {
   const { elements, setElements, undo, redo } = useHistory([]);
