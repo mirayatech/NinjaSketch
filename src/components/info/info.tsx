@@ -24,7 +24,7 @@ export function Info() {
         open={open}
         PaperProps={{
           style: {
-            borderRadius: "15px",
+            borderRadius: "10px",
           },
         }}
       >
