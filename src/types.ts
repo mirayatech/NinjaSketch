@@ -45,4 +45,4 @@ export const Tools = {
 
 export type ToolsType = (typeof Tools)[keyof typeof Tools];
 
-export type Point = { x: number; y: number };
+export type PointType = { x: number; y: number };

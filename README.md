@@ -48,13 +48,13 @@ To navigate larger drawings, I put in pan and zoom tools. With everything functi
 
 Finally, I added testing with Cypress and Testing Library. I conducted end-to-end tests on drawing and manipulating text, lines, rectangles, and freehand drawings to make sure everything worked smoothly.
 
-Along the way, while building everything, I took notes on what I've learned so I don't miss out on it. I also documented the behind-the-scenes processes every time a feature was added. 
+Along the way, while building everything, I took notes on what I've learned so I don't miss out on it. I also documented the behind-the-scenes processes every time a feature was added.
 
 This way, I understood what I've built. The funny thing is, as soon as I started to document what happened behind the scenes and the features I've added, it made me realize that we fully understand something once we've actually taken a step back, thought about it, and documented what we've done. I think this is a good practice to follow when learning something new.
 
 ## 📚 What I Learned
 
-During this project, I've picked up important skills and a better understanding of complex ideas, which improved my logical thinking. 
+During this project, I've picked up important skills and a better understanding of complex ideas, which improved my logical thinking.
 
 ### 🧠 `useHistory` Hook:
 
@@ -110,7 +110,7 @@ To run the project in your local environment, follow these steps:
 
 ## 🍿 Video
 
- https://github.com/mirayatech/NinjaSketch/assets/71933266/6a16c9e5-6380-4317-96e7-d132768f7b40
+https://github.com/mirayatech/NinjaSketch/assets/71933266/6a16c9e5-6380-4317-96e7-d132768f7b40
 
 ## 🎬 Behind the Scenes: Building NinjaSketch
 
@@ -364,9 +364,9 @@ export default function App() {
     return { id, x1, y1, x2, y2, type, roughElement };
   };
 
-  type Point = { x: number; y: number };
+  type PointType = { x: number; y: number };
 
-  const distance = (a: Point, b: Point) =>
+  const distance = (a: PointType, b: PointType) =>
     Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 
   const isWithinElement = (x: number, y: number, element: ElementType) => {
@@ -660,9 +660,9 @@ export default function App() {
     return { id, x1, y1, x2, y2, type, roughElement };
   };
 
-  type Point = { x: number; y: number };
+  type PointType = { x: number; y: number };
 
-  const distance = (a: Point, b: Point) =>
+  const distance = (a: PointType, b: PointType) =>
     Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 
   const nearPoint = (
@@ -1203,9 +1203,9 @@ export default function App() {
     }
   };
 
-  type Point = { x: number; y: number };
+  type PointType = { x: number; y: number };
 
-  const distance = (a: Point, b: Point) =>
+  const distance = (a: PointType, b: PointType) =>
     Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 
   const nearPoint = (
@@ -1227,9 +1227,9 @@ export default function App() {
     y: number,
     maxDistance: number = 1
   ): string | null => {
-    const a: Point = { x: x1, y: y1 };
-    const b: Point = { x: x2, y: y2 };
-    const c: Point = { x, y };
+    const a: PointType = { x: x1, y: y1 };
+    const b: PointType = { x: x2, y: y2 };
+    const c: PointType = { x, y };
     const offset = distance(a, b) - (distance(a, c) + distance(b, c));
     return Math.abs(offset) < maxDistance ? "inside" : null;
   };
@@ -2012,8 +2012,5 @@ In the textarea I've change the `top` and `left` properties to take the `scale` 
   }}
 />
 ```
+
 </details>
-
-
-
-

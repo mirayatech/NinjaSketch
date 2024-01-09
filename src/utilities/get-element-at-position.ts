@@ -1,5 +1,5 @@
 import { nearPoint } from ".";
-import { ElementType, Point, Tools } from "../types";
+import { ElementType, PointType, Tools } from "../types";
 
 export const getElementAtPosition = (
   x: number,
@@ -57,12 +57,12 @@ const onLine = (
   y: number,
   maxDistance: number = 1
 ): string | null => {
-  const a: Point = { x: x1, y: y1 };
-  const b: Point = { x: x2, y: y2 };
-  const c: Point = { x, y };
+  const a: PointType = { x: x1, y: y1 };
+  const b: PointType = { x: x2, y: y2 };
+  const c: PointType = { x, y };
   const offset = distance(a, b) - (distance(a, c) + distance(b, c));
   return Math.abs(offset) < maxDistance ? "inside" : null;
 };
 
-const distance = (a: Point, b: Point) =>
+const distance = (a: PointType, b: PointType) =>
   Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
