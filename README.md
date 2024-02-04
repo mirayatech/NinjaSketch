@@ -10,7 +10,7 @@ An Excalidraw clone with React and TypeScript. Rough.js is used for the sketchy,
 - `Rough.js`
 - `CSS`
 - `Vitest`
-- `Cypress`
+- `Cypress` 
 - `Testing Library`
 
 ## 🦄 Features
