@@ -5,7 +5,6 @@ import {
   useRef,
   useState,
 } from "react";
-import rough from "roughjs";
 import { useHistory } from "./hooks/useHistory";
 import { usePressedKeys } from "./hooks/usePressedKeys";
 import {
